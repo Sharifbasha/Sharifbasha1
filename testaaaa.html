@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Pay</title>
+    <style>
+        /* Your existing CSS styles */
+        h2 {
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #districtSelect {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border 0.3s ease;
+        }
+        #districtSelect:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Select District</h2>
+<select id="districtSelect">
+    <option value="" disabled selected>Select District</option>
+    <option value="Guntur">Guntur</option>
+    <!-- Other districts -->
+</select>
+
+<button onclick="fetchData()">Fetch Data</button>
+
+<div id="result"></div>
+
+<script>
+  
+
+    function addInputEventListeners() {
+        var inputs = document.querySelectorAll('input[data-days-worked]');
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                var rowIndex = input.getAttribute('data-row-index');
+                var designation = input.getAttribute('data-designation');
+                var actualNoOfDays = input.getAttribute('data-actual-days');
+                var noOfDaysWorked = input.value;
+                updatePayInTable(rowIndex, designation, actualNoOfDays, noOfDaysWorked);
+            });
+        });
+    }
+
+    function updatePayInTable(rowIndex, designation, actualNoOfDays, noOfDaysWorked) {
+        var payDetails = updatePay(designation, actualNoOfDays, noOfDaysWorked);
+
+        document.getElementById(`basicPay_${rowIndex}`).innerText = payDetails.basicPay;
+        document.getElementById(`fta_${rowIndex}`).innerText = payDetails.fta;
+        document.getElementById(`dca_${rowIndex}`).innerText = payDetails.dca;
+        document.getElementById(`recordAllowance_${rowIndex}`).innerText = payDetails.recordAllowance;
+        document.getElementById(`totalPayable_${rowIndex}`).innerText = payDetails.totalPayable;
+    }
+
+    function updatePay(designation, actualNoOfDays, noOfDaysWorked) {
+        let basicPay = 0;
+        let fta = 0;
+        let dca = 0;
+        let recordAllowance = 0;
+
+        if (designation === 'CDI') {
+            basicPay = (5000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+            fta = (3000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+            dca = (3000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+        } else if (designation === 'CDF') {
+            basicPay = (10000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+            fta = (3000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+            dca = (3000 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+            recordAllowance = (500 / actualNoOfDays * noOfDaysWorked).toFixed(2);
+        }
+
+        let totalPayable = parseFloat(basicPay) + parseFloat(fta) + parseFloat(dca) + parseFloat(recordAllowance);
+
+        return {
+            basicPay: basicPay,
+            fta: fta,
+            dca: dca,
+            recordAllowance: recordAllowance,
+            totalPayable: totalPayable
+        };
+    }
+</script>
+
+</body>
+</html>
